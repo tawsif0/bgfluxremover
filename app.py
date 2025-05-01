@@ -5,9 +5,11 @@ from flask import Flask, request, send_file, jsonify
 from flask_cors import CORS
 from rembg import remove
 import os
+import logging
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Enhanced CORS configuration
 application = app
+
 def enhance_image(img):
     """Enhance image quality by reducing noise and sharpening."""
     img = cv2.GaussianBlur(img, (5, 5), 0)
@@ -114,9 +116,9 @@ def process_image():
             download_name='output.png'
         )
     except Exception as e:
-        print("[ERROR] Processing failed:", str(e))
+        app.logger.error(f"Processing failed: {str(e)}", exc_info=True)
         return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))  # Render uses $PORT
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
