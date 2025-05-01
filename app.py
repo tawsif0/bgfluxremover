@@ -82,7 +82,7 @@ def remove_logo_background(img):
     result_bgra[:, :, 3] = mask
     return enhance_image(result_bgra)
 
-@app.route('/', methods=['POST'])
+@app.route('/background-remover', methods=['POST'])
 def process_image():
     force_cartoon = request.args.get('mode') == 'cartoon'
     if 'file' not in request.files:
